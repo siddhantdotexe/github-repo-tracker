@@ -120,17 +120,19 @@ If a non-existent user is queried (e.g. `POST /api/repos/track/fake_user_that_do
 }
 ```
 
-## Deployment
+## Deploying to Render
 
-This application is ready to be deployed to cloud providers like Railway or Render.
+This application is ready to be deployed to Render as a Web Service.
 
-1. **Port Binding:** The application listens on the `PORT` environment variable (defaults to `8080`).
-2. **Start Command:** A `Procfile` is included at the root directory:
-   ```
-   web: java -jar target/github-repo-tracker-0.0.1-SNAPSHOT.jar
-   ```
-3. **Database:** By default, it uses an in-memory H2 database. Data will be lost upon restart. For production persistence, configure a PostgreSQL or MySQL database via Spring Data properties and add the respective JDBC driver to `pom.xml`.
-4. **GitHub Authentication (Optional):** By default, GitHub limits unauthenticated API requests. You can pass a GitHub Personal Access Token to increase this limit using the `GITHUB_TOKEN` environment variable.
+1. Go to [render.com](https://render.com) and sign in with GitHub.
+2. Click **New +** > **Web Service** and select this repository.
+3. Render should auto-detect the `render.yaml` configuration. If not, manually set:
+   * **Build Command:** `./mvnw clean package -DskipTests`
+   * **Start Command:** `java -jar target/github-repo-tracker-0.0.1-SNAPSHOT.jar`
+4. Add `GITHUB_TOKEN` as an environment variable in Render's dashboard. 
+   *(Note: You can generate a personal access token in GitHub with no scopes needed for public read-only API access. See [GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) for details.)*
+5. Deploy and note the live URL Render assigns (e.g., `https://github-repo-tracker-xxxx.onrender.com`).
+6. Test the live URL with the example curl commands above, swapping `http://localhost:8080` for your Render URL.
 
 ## Known Limitations
 
