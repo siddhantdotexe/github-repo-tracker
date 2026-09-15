@@ -119,3 +119,22 @@ If a non-existent user is queried (e.g. `POST /api/repos/track/fake_user_that_do
     "path": "/api/repos/track/fake_user_that_does_not_exist_9999"
 }
 ```
+
+## Deployment
+
+This application is ready to be deployed to cloud providers like Railway or Render.
+
+1. **Port Binding:** The application listens on the `PORT` environment variable (defaults to `8080`).
+2. **Start Command:** A `Procfile` is included at the root directory:
+   ```
+   web: java -jar target/github-repo-tracker-0.0.1-SNAPSHOT.jar
+   ```
+3. **Database:** By default, it uses an in-memory H2 database. Data will be lost upon restart. For production persistence, configure a PostgreSQL or MySQL database via Spring Data properties and add the respective JDBC driver to `pom.xml`.
+4. **GitHub Authentication (Optional):** By default, GitHub limits unauthenticated API requests. You can pass a GitHub Personal Access Token to increase this limit using the `GITHUB_TOKEN` environment variable.
+
+## Known Limitations
+
+* **GitHub Rate Limits:** Unauthenticated requests to the GitHub API are limited to 60 requests per hour per IP address. If you exceed this, you will receive a 429 Rate Limit Exceeded error. Set the `GITHUB_TOKEN` environment variable in production to increase this limit.
+* **Pagination:** The `/users/{username}/repos` endpoint only fetches the first page of results (up to 30 repositories by default). Repositories beyond the first page are currently not tracked.
+* **In-Memory Storage:** The H2 database stores data in-memory. If the application restarts, all tracked repositories will be cleared.
+
