@@ -25,10 +25,14 @@ public class GitHubClient {
     
     private final RestTemplate restTemplate;
     private final String githubApiBaseUrl;
+    private final String githubApiToken;
 
-    public GitHubClient(RestTemplate restTemplate, @Value("${github.api.base-url}") String githubApiBaseUrl) {
+    public GitHubClient(RestTemplate restTemplate, 
+                        @Value("${github.api.base-url}") String githubApiBaseUrl,
+                        @Value("${github.api.token}") String githubApiToken) {
         this.restTemplate = restTemplate;
         this.githubApiBaseUrl = githubApiBaseUrl;
+        this.githubApiToken = githubApiToken;
     }
 
     public List<GitHubRepoDto> fetchUserRepos(String username) {
@@ -37,6 +41,9 @@ public class GitHubClient {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "github-repo-tracker-app");
+        if (githubApiToken != null && !githubApiToken.trim().isEmpty()) {
+            headers.set("Authorization", "Bearer " + githubApiToken.trim());
+        }
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
